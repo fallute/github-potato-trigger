@@ -13,15 +13,12 @@ HEADERS = {
     "Accept": "application/vnd.github+json"
 }
 
-
 @app.route("/")
 def home():
     return "✅ GitHub Action Webhook is live."
 
-
 @app.route("/run_scraper", methods=["POST"])
 def run_scraper():
-    # 1. Trigger the GitHub Action
     trigger = requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches",
         headers=HEADERS,
@@ -33,7 +30,6 @@ def run_scraper():
 
     time.sleep(5)  # wait briefly for the run to show up
 
-    # 2. Get the latest run ID
     run_list = requests.get(
         f"https://api.github.com/repos/{GITHUB_REPO}/actions/runs",
         headers=HEADERS
@@ -47,7 +43,6 @@ def run_scraper():
 
     run_id = runs[0]["id"]
     return jsonify({"status": "started", "run_id": run_id}), 200
-
 
 @app.route("/status/<int:run_id>", methods=["GET"])
 def check_status(run_id):
@@ -64,7 +59,6 @@ def check_status(run_id):
         "conclusion": data.get("conclusion")
     })
 
-
 @app.route("/cancel/<int:run_id>", methods=["POST"])
 def cancel_run(run_id):
     cancel = requests.post(
@@ -75,3 +69,7 @@ def cancel_run(run_id):
         return jsonify({"status": "cancelled"}), 200
     else:
         return jsonify({"error": "Cancel failed", "details": cancel.text}), 400
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
