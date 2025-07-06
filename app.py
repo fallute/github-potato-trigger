@@ -4,15 +4,14 @@ import os
 
 app = Flask(__name__)
 
-# Load from environment variables for safety
 GITHUB_REPO = os.getenv("GITHUB_REPO", "fallute/potato-scraper")
 GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW", "scrape.yml")
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # 🔐 do not hardcode
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 @app.route("/run_scraper", methods=["POST"])
 def run_scraper():
     if not GITHUB_TOKEN:
-        return jsonify({"error": "GitHub token not configured"}), 500
+        return jsonify({"error": "GitHub token not set"}), 500
 
     headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
@@ -26,13 +25,14 @@ def run_scraper():
     )
 
     if response.status_code == 204:
-        return jsonify({"status": "success", "message": "Action triggered"}), 200
+        return jsonify({"status": "success"}), 200
     else:
-        return jsonify({"status": "error", "details": response.text}), response.status_code
+        return jsonify({"error": response.text}), response.status_code
 
-@app.route("/", methods=["GET"])
-def index():
-    return "✅ GitHub Trigger Webhook is running!"
+@app.route("/")
+def home():
+    return "✅ GitHub Action Trigger is live."
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
