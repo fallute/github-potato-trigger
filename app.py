@@ -22,7 +22,7 @@ def run_scraper():
     trigger = requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches",
         headers=HEADERS,
-        json={"ref": os.getenv("GITHUB_BRANCH", "main")}
+        json={"ref": os.getenv("GITHUB_BRANCH", "master")}
     )
 
     if trigger.status_code != 204:
