@@ -61,7 +61,7 @@ def self_restart():
 
 @app.route("/", methods=["GET"])
 def index():
-    return "✅ GitHub Trigger Webhook is running!"
+    return "✅ Running!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # Render uses env var PORT
