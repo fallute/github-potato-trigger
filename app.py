@@ -22,7 +22,7 @@ def run_scraper():
     response = requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches",
         headers=headers,
-        json={"ref": "main"}
+        json={"ref": "master"}
     )
 
     if response.status_code == 204:
